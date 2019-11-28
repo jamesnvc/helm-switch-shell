@@ -43,20 +43,19 @@
 (require 'subr-x)
 
 (defun helm-switch-eshell--pwd-replace-home (directory)
-  "Replace $HOME in directory with tilde character."
+  "Replace $HOME in DIRECTORY with tilde character."
   (let ((home (expand-file-name (getenv "HOME"))))
     (if (string-prefix-p home directory)
         (concat "~" (substring directory (length home)))
       directory)))
 
 (defun helm-switch-eshell--buffer-dir-name (buf)
-  "Display the directory of the given buffer, with HOME replaced with
-tilde."
+  "Display the directory of BUF, with HOME replaced with tilde."
+
   (helm-switch-eshell--pwd-replace-home (buffer-local-value 'default-directory buf)))
 
 (defun helm-switch-eshell--get-candidates ()
-  "Get existing eshell buffers as well as a potential new shell
-location for the helm-switch-eshell source."
+  "Get existing eshell buffers as well as a potential new shell location for the ‘helm-switch-eshell’ source."
   (let* ((here (expand-file-name default-directory))
          (dist2here (lambda (d)
                       (let ((prefix (compare-strings
@@ -97,7 +96,7 @@ location for the helm-switch-eshell source."
       (helm-next-line))))
 
 (defun helm-switch-eshell--horiz-split (candidate)
-  "Open candidate in a horizontal split."
+  "Open CANDIDATE in a horizontal split."
   (if (bufferp candidate)
       (progn
         (select-window (split-window-below))
@@ -108,7 +107,7 @@ location for the helm-switch-eshell source."
       (balance-windows))))
 
 (defun helm-switch-eshell--vert-split (candidate)
-  "Open candidate in a vertical split."
+  "Open CANDIDATE in a vertical split."
   (if (bufferp candidate)
       (progn
         (select-window (split-window-right))
