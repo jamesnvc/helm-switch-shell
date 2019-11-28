@@ -1,10 +1,10 @@
-* helm-eshell
+* helm-switch-eshell
 
   This library provides a simple function that uses helm to easily switch between many eshells.
 
 ** Usage
 
-   Run ~M-x helm-eshell~.
+   Run ~M-x helm-switch-eshell~.
 
    It show a list the eshells you have open by their current directory, sorted by how close they are to the directory you're currently in.
 
