@@ -44,7 +44,7 @@
   (let ((home (expand-file-name (getenv "HOME"))))
     (if (string-prefix-p home directory)
         (concat "~" (substring directory (length home)))
-      pwd)))
+      directory)))
 
 (defun helm-switch-eshell--buffer-dir-name (buf)
   "Display the directory of the given buffer, with HOME replaced with
