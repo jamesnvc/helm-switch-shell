@@ -1,6 +1,8 @@
 ;;; helm-eshell --- A Helm source for switching eshells -*- lexical-binding: t -*-
 
-;; Author: James Cash
+;; Copyright (C) 2019 James Cash
+
+;; Author: James N. V. Cash <james.cash@occasionallycogent.com>
 ;; URL: https://github.com/jamesnvc/helm-eshell
 ;; Package-Requires: ((emacs "25") (cl-lib "0.5") (helm "2.8.8"))
 ;; Version: 1.0
@@ -25,6 +27,11 @@
 
 ;; GPL 3.0+
 
+;;; Commentary:
+
+;; This package offers a helm-source for switching between eshells via
+;; helm, sorting them by how their working directory is to your
+;; current active directory.
 
 ;;; Code:
 
