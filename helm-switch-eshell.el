@@ -1,11 +1,11 @@
-;;; helm-switch-eshell --- A Helm source for switching eshells -*- lexical-binding: t -*-
+;;; helm-switch-eshell.el --- A Helm source for switching eshells -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2019 James Cash
 
 ;; Author: James N. V. Cash <james.cash@occasionallycogent.com>
 ;; URL: https://github.com/jamesnvc/helm-switch-eshell
 ;; Package-Requires: ((emacs "25") (cl-lib "0.5") (helm "2.8.8"))
-;; Version: 1.0
+;; Package-Version: 1.0
 ;; Keywords: matching, processes, terminals, tools
 
 ;; This file is not part of GNU Emacs
@@ -173,3 +173,4 @@ location for the helm-switch-eshell source."
         :prompt "eshell in: "))
 
 (provide 'helm-switch-eshell)
+;;; helm-switch-eshell.el ends here
