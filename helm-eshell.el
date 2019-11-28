@@ -145,8 +145,7 @@
   (interactive)
   (add-hook 'helm-after-update-hook
             #'helm-eshell--move-to-first-real-candidate)
-  (helm :sources
-
+  (helm :sources helm-eshell--source
         :buffer "*helm eshell*"
         :prompt "eshell in: "))
 
