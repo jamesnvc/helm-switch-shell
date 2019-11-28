@@ -39,10 +39,21 @@
 (require 'helm-lib)
 (require 'cl-lib)
 
+(defun helm-eshell--pwd-replace-home (directory)
+  "Replace $HOME in directory with tilde character."
+  (let ((home (expand-file-name (getenv "HOME"))))
+    (if (string-prefix-p home directory)
+        (concat "~" (substring directory (length home)))
+      pwd)))
+
 (defun helm-eshell--buffer-dir-name (buf)
-  (pwd-replace-home (buffer-local-value 'default-directory buf)))
+  "Display the directory of the given buffer, with HOME replaced with
+tilde."
+  (helm-eshell--pwd-replace-home (buffer-local-value 'default-directory buf)))
 
 (defun helm-eshell--get-candidates ()
+  "Get existing eshell buffers as well as a potential new shell
+location for the helm-eshell source."
   (let* ((here (expand-file-name default-directory))
          (dist2here (lambda (d)
                       (let ((prefix (compare-strings
@@ -72,16 +83,18 @@
                              (propertize "[+]" 'font-lock-face
                                          '(:background "#ff69c6" :foreground "#282a36")))
                             " "
-                            (pwd-replace-home new-dir))
+                            (helm-eshell--pwd-replace-home new-dir))
                            new-dir)))
     (cons new-eshell eshells)))
 
 (defun helm-eshell--move-to-first-real-candidate ()
+  "Move the helm selection down to the first that's actually a buffer."
   (let ((sel (helm-get-selection nil nil (helm-get-current-source))))
     (unless (bufferp sel)
       (helm-next-line))))
 
 (defun helm-eshell--horiz-split (candidate)
+  "Open candidate in a horizontal split."
   (if (bufferp candidate)
       (progn
         (select-window (split-window-below))
@@ -92,6 +105,7 @@
       (balance-windows))))
 
 (defun helm-eshell--vert-split (candidate)
+  "Open candidate in a vertical split."
   (if (bufferp candidate)
       (progn
         (select-window (split-window-right))
@@ -102,11 +116,13 @@
       (balance-windows))))
 
 (defun helm-eshell--horiz-split-command ()
+  "Helm command that opens eshell in a horizontal split."
   (interactive)
   (with-helm-alive-p
     (helm-exit-and-execute-action #'helm-eshell--horiz-split)))
 
 (defun helm-eshell--vert-split-command ()
+  "Helm command that opens eshell in a vertical split."
   (interactive)
   (with-helm-alive-p
     (helm-exit-and-execute-action #'helm-eshell--vert-split)))
@@ -148,7 +164,7 @@
 
 ;;;###autoload
 (defun helm-eshell ()
-  "Switch between or create eshell buffers using helm"
+  "Switch between or create eshell buffers using helm."
   (interactive)
   (add-hook 'helm-after-update-hook
             #'helm-eshell--move-to-first-real-candidate)
