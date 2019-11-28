@@ -1,0 +1,16 @@
+* helm-eshell
+
+  This library provides a simple function that uses helm to easily switch between many eshells.
+
+** Usage
+
+   Run ~M-x helm-eshell~.
+
+   It show a list the eshells you have open by their current directory, sorted by how close they are to the directory you're currently in.
+
+   You can switch to one of those buffers, or type the name of a new directory to create a shell there (defaulting to your current directory).
+
+   It provides the following keybindings:
+
+   - ~C-s~: open the indicated eshell in horizontal split (~split-window-below~)
+   - ~C-v~: open the indicated eshell in a vertical split (~split-window-right~)
