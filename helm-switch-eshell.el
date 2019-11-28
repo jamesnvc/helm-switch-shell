@@ -4,7 +4,7 @@
 
 ;; Author: James N. V. Cash <james.cash@occasionallycogent.com>
 ;; URL: https://github.com/jamesnvc/helm-switch-eshell
-;; Package-Requires: ((emacs "25") (cl-lib "0.5") (helm "2.8.8") (dash "2.16.0"))
+;; Package-Requires: ((emacs "25") (cl-lib "0.5") (helm "2.8.8") (dash "2.16.0") (s "1.12.0"))
 ;; Package-Version: 1.0
 ;; Keywords: matching, processes, terminals, tools
 
@@ -35,10 +35,12 @@
 
 ;;; Code:
 
-(require 'helm)
-(require 'helm-lib)
 (require 'cl-lib)
 (require 'dash)
+(require 'helm)
+(require 'helm-lib)
+(require 's)
+(require 'subr-x)
 
 (defun helm-switch-eshell--pwd-replace-home (directory)
   "Replace $HOME in directory with tilde character."
@@ -65,7 +67,7 @@ location for the helm-switch-eshell source."
                               (length d))
                             (substring here 0)
                             (s-split "/")
-                            length
+                            (length)
                             (+ (if (numberp prefix) 0 2))))))
          (eshells (cl-loop for buf in (buffer-list)
                            when (string-prefix-p "*eshell*" (buffer-name buf))
