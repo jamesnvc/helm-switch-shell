@@ -6,7 +6,7 @@
 ;; URL: https://github.com/jamesnvc/helm-eshell
 ;; Package-Requires: ((emacs "25") (cl-lib "0.5") (helm "2.8.8"))
 ;; Version: 1.0
-;; Keywords: helm, eshell
+;; Keywords: matching, processes, terminals, tools
 
 ;; This file is not part of GNU Emacs
 
