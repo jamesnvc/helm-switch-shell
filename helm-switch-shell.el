@@ -79,9 +79,7 @@
   "Create a new shell or eshell, honouring `helm-switch-shell-new-shell-type'."
   (cl-case helm-switch-shell-new-shell-type
     (eshell (eshell t))
-    (shell
-     (let ((display-buffer-alist '(("\\`\\*shell" display-buffer-same-window))))
-       (shell)))))
+    (shell (shell))))
 
 ;; Switching shells
 
@@ -132,10 +130,11 @@
       (progn
         (select-window (split-window-below))
         (switch-to-buffer candidate))
-    (let ((default-directory candidate))
-      (select-window (split-window-below))
-      (helm-switch-shell--create-new)
-      (balance-windows))))
+    (let ((default-directory candidate)
+          (display-buffer-alist '(("\\`\\*e?shell" display-buffer-same-window))))
+    (select-window (split-window-below))
+    (helm-switch-shell--create-new)
+    (balance-windows))))
 
 (defun helm-switch-shell--vert-split (candidate)
   "Open CANDIDATE in a vertical split."
@@ -143,7 +142,8 @@
       (progn
         (select-window (split-window-right))
         (switch-to-buffer candidate))
-    (let ((default-directory candidate))
+    (let ((default-directory candidate)
+          (display-buffer-alist '(("\\`\\*e?shell" display-buffer-same-window))))
       (select-window (split-window-right))
       (helm-switch-shell--create-new)
       (balance-windows))))
