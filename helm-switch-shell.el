@@ -1,9 +1,9 @@
-;;; helm-switch-eshell.el --- A Helm source for switching eshells -*- lexical-binding: t -*-
+;;; helm-switch-shell.el --- A Helm source for switching between shell buffers -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2019 James Cash
 
 ;; Author: James N. V. Cash <james.cash@occasionallycogent.com>
-;; URL: https://github.com/jamesnvc/helm-switch-eshell
+;; URL: https://github.com/jamesnvc/helm-switch-shell
 ;; Package-Requires: ((emacs "25") (cl-lib "0.5") (helm "2.8.8") (dash "2.16.0") (s "1.12.0"))
 ;; Package-Version: 1.0
 ;; Keywords: matching, processes, terminals, tools
@@ -29,7 +29,7 @@
 
 ;;; Commentary:
 
-;; This package offers a helm-source for switching between eshells via
+;; This package offers a helm-source for switching between shells via
 ;; helm, sorting them by how their working directory is to your
 ;; current active directory.
 
@@ -44,35 +44,48 @@
 
 ;; Customization
 
-(defgroup helm-switch-eshell nil
-  "Group for `helm-switch-eshell' customizations"
+(defgroup helm-switch-shell nil
+  "Group for `helm-switch-shell' customizations"
   :group 'helm)
+
+(defcustom helm-switch-shell-new-shell-type 'eshell
+  "When creating a new shell, should it be eshell (default) or shell."
+  :type '(radio (const :tag "eshell" eshell)
+                (const :tag "shell" shell))
+  :group 'helm-switch-shell)
 
 ;; Faces
 
-(defface helm-switch-eshell-new-shell-face
+(defface helm-switch-shell-new-shell-face
   `((t (:background "#ff69c6" :foreground "#282a36")))
   "Face for the [+] indicator for creating a new shell."
-  :group 'helm-switch-eshell)
+  :group 'helm-switch-shell)
 
 ;; Helpers
 
-(defun helm-switch-eshell--pwd-replace-home (directory)
+(defun helm-switch-shell--pwd-replace-home (directory)
   "Replace $HOME in DIRECTORY with tilde character."
   (let ((home (expand-file-name (getenv "HOME"))))
     (if (string-prefix-p home directory)
         (concat "~" (substring directory (length home)))
       directory)))
 
-(defun helm-switch-eshell--buffer-dir-name (buf)
+(defun helm-switch-shell--buffer-dir-name (buf)
   "Display the directory of BUF, with HOME replaced with tilde."
 
-  (helm-switch-eshell--pwd-replace-home (buffer-local-value 'default-directory buf)))
+  (helm-switch-shell--pwd-replace-home (buffer-local-value 'default-directory buf)))
+
+(defun helm-switch-shell--create-new ()
+  "Create a new shell or eshell, honouring `helm-switch-shell-new-shell-type'."
+  (message "Creating new")
+  (case helm-switch-shell-new-shell-type
+    ('eshell (eshell t))
+    ('shell (shell))))
 
 ;; Switching shells
 
-(defun helm-switch-eshell--get-candidates ()
-  "Get existing eshell buffers as well as a potential new shell location for the ‘helm-switch-eshell’ source."
+(defun helm-switch-shell--get-candidates ()
+  "Get existing shell/eshell buffers as well as a potential new shell location for the ‘helm-switch-shell’ source."
   (let* ((here (expand-file-name default-directory))
          (dist2here (lambda (d)
                       (let ((prefix (compare-strings
@@ -85,10 +98,10 @@
                             (s-split "/")
                             (length)
                             (+ (if (numberp prefix) 0 2))))))
-         (eshells (cl-loop for buf in (buffer-list)
+         (shells (cl-loop for buf in (buffer-list)
                            when (or (string-prefix-p "*eshell*" (buffer-name buf))
                                     (string-prefix-p "*shell*" (buffer-name buf)))
-                           collect (cons (helm-switch-eshell--buffer-dir-name buf) buf) into cands
+                           collect (cons (helm-switch-shell--buffer-dir-name buf) buf) into cands
                            finally return (-> cands
                                               (sort (lambda (a b) (< (length (car a)) (length (car b)))))
                                               (sort
@@ -97,22 +110,22 @@
          (new-dir (if (string-blank-p helm-input)
                       default-directory
                     helm-input))
-         (new-eshell (cons (concat
+         (new-shell (cons (concat
                             (propertize
                              " " 'display
-                             (propertize "[+]" 'face 'helm-switch-eshell-new-shell-face))
+                             (propertize "[+]" 'face 'helm-switch-shell-new-shell-face))
                             " "
-                            (helm-switch-eshell--pwd-replace-home new-dir))
+                            (helm-switch-shell--pwd-replace-home new-dir))
                            new-dir)))
-    (cons new-eshell eshells)))
+    (cons new-shell shells)))
 
-(defun helm-switch-eshell--move-to-first-real-candidate ()
+(defun helm-switch-shell--move-to-first-real-candidate ()
   "Move the helm selection down to the first that's actually a buffer."
   (let ((sel (helm-get-selection nil nil (helm-get-current-source))))
     (unless (bufferp sel)
       (helm-next-line))))
 
-(defun helm-switch-eshell--horiz-split (candidate)
+(defun helm-switch-shell--horiz-split (candidate)
   "Open CANDIDATE in a horizontal split."
   (if (bufferp candidate)
       (progn
@@ -120,10 +133,10 @@
         (switch-to-buffer candidate))
     (let ((default-directory candidate))
       (select-window (split-window-below))
-      (eshell t)
+      (helm-switch-shell--create-new)
       (balance-windows))))
 
-(defun helm-switch-eshell--vert-split (candidate)
+(defun helm-switch-shell--vert-split (candidate)
   "Open CANDIDATE in a vertical split."
   (if (bufferp candidate)
       (progn
@@ -131,65 +144,63 @@
         (switch-to-buffer candidate))
     (let ((default-directory candidate))
       (select-window (split-window-right))
-      (eshell t)
+      (helm-switch-shell--create-new)
       (balance-windows))))
 
-(defun helm-switch-eshell--horiz-split-command ()
-  "Helm command that opens eshell in a horizontal split."
+(defun helm-switch-shell--horiz-split-command ()
+  "Helm command that opens shell in a horizontal split."
   (interactive)
   (with-helm-alive-p
-    (helm-exit-and-execute-action #'helm-switch-eshell--horiz-split)))
+    (helm-exit-and-execute-action #'helm-switch-shell--horiz-split)))
 
-(defun helm-switch-eshell--vert-split-command ()
-  "Helm command that opens eshell in a vertical split."
+(defun helm-switch-shell--vert-split-command ()
+  "Helm command that opens shell in a vertical split."
   (interactive)
   (with-helm-alive-p
-    (helm-exit-and-execute-action #'helm-switch-eshell--vert-split)))
+    (helm-exit-and-execute-action #'helm-switch-shell--vert-split)))
 
-(defconst helm-switch-eshell-map
+(defconst helm-switch-shell-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map helm-map)
-    (define-key map (kbd "C-s") #'helm-switch-eshell--horiz-split-command)
-    (define-key map (kbd "C-v") #'helm-switch-eshell--vert-split-command)
+    (define-key map (kbd "C-s") #'helm-switch-shell--horiz-split-command)
+    (define-key map (kbd "C-v") #'helm-switch-shell--vert-split-command)
     map)
-  "Keymap for `helm-switch-eshell'.")
+  "Keymap for `helm-switch-shell'.")
 
-(defconst helm-switch-eshell--source
-  (helm-build-sync-source "eshell"
-    :keymap helm-switch-eshell-map
-    :candidates #'helm-switch-eshell--get-candidates
+(defconst helm-switch-shell--source
+  (helm-build-sync-source "shell-switcher"
+    :keymap helm-switch-shell-map
+    :candidates #'helm-switch-shell--get-candidates
     :action (list
              (cons
-              "Switch to eshell"
+              "Switch to shell"
               (lambda (candidate)
                 (if (bufferp candidate)
                     (switch-to-buffer candidate)
                   (let ((default-directory candidate))
-                    (eshell t)))))
+                    (helm-switch-shell--create-new)))))
              (cons
               "Open shell in horizontal split"
-              #'helm-switch-eshell--horiz-split)
+              #'helm-switch-shell--horiz-split)
              (cons
               "Open shell in vertical split"
-              #'helm-switch-eshell--vert-split))
-    ;; make the candidates get re-generated on input, so one can
-    ;; actually create an eshell in a new directory
+              #'helm-switch-shell--vert-split))
     :volatile t
     :cleanup
     (lambda ()
       (remove-hook 'helm-after-update-hook
-                   #'helm-switch-eshell--move-to-first-real-candidate)))
-  "Helm source to switch between eshells.")
+                   #'helm-switch-shell--move-to-first-real-candidate)))
+  "Helm source to switch between shells.")
 
 ;;;###autoload
-(defun helm-switch-eshell ()
-  "Switch between or create eshell buffers using helm."
+(defun helm-switch-shell ()
+  "Switch between or create shell/eshell buffers using helm."
   (interactive)
   (add-hook 'helm-after-update-hook
-            #'helm-switch-eshell--move-to-first-real-candidate)
-  (helm :sources helm-switch-eshell--source
-        :buffer "*helm eshell*"
-        :prompt "eshell in: "))
+            #'helm-switch-shell--move-to-first-real-candidate)
+  (helm :sources helm-switch-shell--source
+        :buffer "*helm shell*"
+        :prompt "shell in: "))
 
-(provide 'helm-switch-eshell)
-;;; helm-switch-eshell.el ends here
+(provide 'helm-switch-shell)
+;;; helm-switch-shell.el ends here
