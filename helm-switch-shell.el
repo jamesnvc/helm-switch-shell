@@ -77,7 +77,6 @@
 
 (defun helm-switch-shell--create-new ()
   "Create a new shell or eshell, honouring `helm-switch-shell-new-shell-type'."
-  (message "Creating new")
   (cl-case helm-switch-shell-new-shell-type
     (eshell (eshell t))
     (shell (shell))))
