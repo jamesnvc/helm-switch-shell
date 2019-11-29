@@ -124,29 +124,25 @@
     (unless (bufferp sel)
       (helm-next-line))))
 
-(defun helm-switch-shell--horiz-split (candidate)
-  "Open CANDIDATE in a horizontal split."
+(defun helm-switch-shell--open-split (splitf candidate)
+  "Open CANDIDATE in a new split using the window splitting function SPLITF."
   (if (bufferp candidate)
       (progn
-        (select-window (split-window-below))
+        (select-window (funcall splitf))
         (switch-to-buffer candidate))
     (let ((default-directory candidate)
           (display-buffer-alist '(("\\`\\*e?shell" display-buffer-same-window))))
-    (select-window (split-window-below))
-    (helm-switch-shell--create-new)
-    (balance-windows))))
+      (select-window (funcall splitf))
+      (helm-switch-shell--create-new)
+      (balance-windows))))
+
+(defun helm-switch-shell--horiz-split (candidate)
+  "Open CANDIDATE in a horizontal split."
+  (helm-switch-shell--open-split #'split-window-below candidate))
 
 (defun helm-switch-shell--vert-split (candidate)
   "Open CANDIDATE in a vertical split."
-  (if (bufferp candidate)
-      (progn
-        (select-window (split-window-right))
-        (switch-to-buffer candidate))
-    (let ((default-directory candidate)
-          (display-buffer-alist '(("\\`\\*e?shell" display-buffer-same-window))))
-      (select-window (split-window-right))
-      (helm-switch-shell--create-new)
-      (balance-windows))))
+  (helm-switch-shell--open-split #'split-window-right candidate))
 
 (defun helm-switch-shell--horiz-split-command ()
   "Helm command that opens shell in a horizontal split."
