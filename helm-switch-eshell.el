@@ -42,6 +42,21 @@
 (require 's)
 (require 'subr-x)
 
+;; Customization
+
+(defgroup helm-switch-eshell nil
+  "Group for `helm-switch-eshell' customizations"
+  :group 'helm)
+
+;; Faces
+
+(defface helm-switch-eshell-new-shell-face
+  `((t (:background "#ff69c6" :foreground "#282a36")))
+  "Face for the [+] indicator for creating a new shell."
+  :group 'helm-switch-eshell)
+
+;; Helpers
+
 (defun helm-switch-eshell--pwd-replace-home (directory)
   "Replace $HOME in DIRECTORY with tilde character."
   (let ((home (expand-file-name (getenv "HOME"))))
@@ -53,6 +68,8 @@
   "Display the directory of BUF, with HOME replaced with tilde."
 
   (helm-switch-eshell--pwd-replace-home (buffer-local-value 'default-directory buf)))
+
+;; Switching shells
 
 (defun helm-switch-eshell--get-candidates ()
   "Get existing eshell buffers as well as a potential new shell location for the ‘helm-switch-eshell’ source."
@@ -82,8 +99,7 @@
          (new-eshell (cons (concat
                             (propertize
                              " " 'display
-                             (propertize "[+]" 'font-lock-face
-                                         '(:background "#ff69c6" :foreground "#282a36")))
+                             (propertize "[+]" 'face 'helm-switch-eshell-new-shell-face))
                             " "
                             (helm-switch-eshell--pwd-replace-home new-dir))
                            new-dir)))
