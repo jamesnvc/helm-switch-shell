@@ -75,9 +75,9 @@
 
   (helm-switch-shell--pwd-replace-home (buffer-local-value 'default-directory buf)))
 
-(defun helm-switch-shell--create-new ()
-  "Create a new shell or eshell, honouring `helm-switch-shell-new-shell-type'."
-  (cl-case helm-switch-shell-new-shell-type
+(defun helm-switch-shell--create-new (&optional type)
+  "Create a new shell or eshell, as optionally specified by TYPE, defaulting to `helm-switch-shell-new-shell-type'."
+  (cl-case (or type helm-switch-shell-new-shell-type)
     (eshell (eshell t))
     (shell (shell))))
 
@@ -176,6 +176,20 @@
                     (switch-to-buffer candidate)
                   (let ((default-directory candidate))
                     (helm-switch-shell--create-new)))))
+             (cons
+              "Create in eshell"
+              (lambda (candidate)
+                (let ((default-directory (if (bufferp candidate)
+                                             (buffer-local-value 'default-directory candidate)
+                                           candidate)))
+                  (helm-switch-shell--create-new 'eshell))))
+             (cons
+              "Create in shell"
+              (lambda (candidate)
+                (let ((default-directory (if (bufferp candidate)
+                                             (buffer-local-value 'default-directory candidate)
+                                           candidate)))
+                  (helm-switch-shell--create-new 'shell))))
              (cons
               "Open shell in horizontal split"
               #'helm-switch-shell--horiz-split)
