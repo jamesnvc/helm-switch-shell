@@ -1,20 +1,20 @@
-* helm-switch-eshell
+* helm-switch-shell
 
-  This library provides a simple function that uses helm to easily switch between many eshells.
+  This library provides a simple function that uses helm to easily switch between many (e)shells.
 
 ** Usage
 
-   Run ~M-x helm-switch-eshell~. It's especially convienent to make a key binding for this, e.g.
+   Run ~M-x helm-switch-shell~. It's especially convienent to make a key binding for this, e.g.
 
 #+begin_src elisp
-(global-set-key (kdb "<f3>") #'helm-switch-eshell)
+(global-set-key (kdb "<f3>") #'helm-switch-shell)
 #+end_src
 
-   It show a list the eshells you have open by their current directory, sorted by how close they are to the directory you're currently in.
+   It show a list the ~shell-mode~ and ~eshell-mode~ shells you have open by their current directory, sorted by how close they are to the directory you're currently in.
 
    You can switch to one of those buffers, or type the name of a new directory to create a shell there (defaulting to your current directory).
 
    It provides the following keybindings:
 
-   - ~C-s~: open the indicated eshell in horizontal split (~split-window-below~)
-   - ~C-v~: open the indicated eshell in a vertical split (~split-window-right~)
+   - ~C-s~: open the indicated shell in horizontal split (~split-window-below~)
+   - ~C-v~: open the indicated shell in a vertical split (~split-window-right~)
