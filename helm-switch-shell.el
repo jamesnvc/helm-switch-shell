@@ -79,7 +79,9 @@
   "Create a new shell or eshell, honouring `helm-switch-shell-new-shell-type'."
   (cl-case helm-switch-shell-new-shell-type
     (eshell (eshell t))
-    (shell (shell))))
+    (shell
+     (let ((display-buffer-alist '(("\\`\\*shell" display-buffer-same-window))))
+       (shell)))))
 
 ;; Switching shells
 
