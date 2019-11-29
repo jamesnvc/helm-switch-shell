@@ -7,7 +7,7 @@
    Run ~M-x helm-switch-shell~. It's especially convienent to make a key binding for this, e.g.
 
 #+begin_src elisp
-(global-set-key (kdb "<f3>") #'helm-switch-shell)
+(global-set-key (kbd "<f3>") #'helm-switch-shell)
 #+end_src
 
    It show a list of the ~shell-mode~ and ~eshell-mode~ shells you have open by their current directory, sorted by how close they are to the directory you're currently in.
