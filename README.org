@@ -4,7 +4,11 @@
 
 ** Usage
 
-   Run ~M-x helm-switch-eshell~.
+   Run ~M-x helm-switch-eshell~. It's especially convienent to make a key binding for this, e.g.
+
+#+begin_src elisp
+(global-set-key (kdb "<f3>") #'helm-switch-eshell)
+#+end_src
 
    It show a list the eshells you have open by their current directory, sorted by how close they are to the directory you're currently in.
 
