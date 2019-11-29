@@ -98,24 +98,24 @@
                             (length)
                             (+ (if (numberp prefix) 0 2))))))
          (shells (cl-loop for buf in (buffer-list)
-                           when (or (string-prefix-p "*eshell*" (buffer-name buf))
-                                    (string-prefix-p "*shell*" (buffer-name buf)))
-                           collect (cons (helm-switch-shell--buffer-dir-name buf) buf) into cands
-                           finally return (-> cands
-                                              (sort (lambda (a b) (< (length (car a)) (length (car b)))))
-                                              (sort
-                                               (lambda (a b) (> (funcall dist2here (car a))
-                                                           (funcall dist2here (car b))))))))
+                          when (or (string-prefix-p "*eshell*" (buffer-name buf))
+                                   (string-prefix-p "*shell*" (buffer-name buf)))
+                          collect (cons (helm-switch-shell--buffer-dir-name buf) buf) into cands
+                          finally return (-> cands
+                                             (sort (lambda (a b) (< (length (car a)) (length (car b)))))
+                                             (sort
+                                              (lambda (a b) (> (funcall dist2here (car a))
+                                                          (funcall dist2here (car b))))))))
          (new-dir (if (string-blank-p helm-input)
                       default-directory
                     helm-input))
          (new-shell (cons (concat
-                            (propertize
-                             " " 'display
-                             (propertize "[+]" 'face 'helm-switch-shell-new-shell-face))
-                            " "
-                            (helm-switch-shell--pwd-replace-home new-dir))
-                           new-dir)))
+                           (propertize
+                            " " 'display
+                            (propertize "[+]" 'face 'helm-switch-shell-new-shell-face))
+                           " "
+                           (helm-switch-shell--pwd-replace-home new-dir))
+                          new-dir)))
     (cons new-shell shells)))
 
 (defun helm-switch-shell--move-to-first-real-candidate ()
