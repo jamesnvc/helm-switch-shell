@@ -168,34 +168,33 @@
   (helm-build-sync-source "shell-switcher"
     :keymap helm-switch-shell-map
     :candidates #'helm-switch-shell--get-candidates
-    :action (list
-             (cons
-              "Switch to shell"
-              (lambda (candidate)
-                (if (bufferp candidate)
-                    (switch-to-buffer candidate)
-                  (let ((default-directory candidate))
-                    (helm-switch-shell--create-new)))))
-             (cons
-              "Create in eshell"
-              (lambda (candidate)
-                (let ((default-directory (if (bufferp candidate)
-                                             (buffer-local-value 'default-directory candidate)
-                                           candidate)))
-                  (helm-switch-shell--create-new 'eshell))))
-             (cons
-              "Create in shell"
-              (lambda (candidate)
-                (let ((default-directory (if (bufferp candidate)
-                                             (buffer-local-value 'default-directory candidate)
-                                           candidate)))
-                  (helm-switch-shell--create-new 'shell))))
-             (cons
-              "Open shell in horizontal split"
-              #'helm-switch-shell--horiz-split)
-             (cons
-              "Open shell in vertical split"
-              #'helm-switch-shell--vert-split))
+    :action (helm-make-actions
+             "Switch to shell"
+             (lambda (candidate)
+               (if (bufferp candidate)
+                   (switch-to-buffer candidate)
+                 (let ((default-directory candidate))
+                   (helm-switch-shell--create-new))))
+
+             "Create in eshell"
+             (lambda (candidate)
+               (let ((default-directory (if (bufferp candidate)
+                                            (buffer-local-value 'default-directory candidate)
+                                          candidate)))
+                 (helm-switch-shell--create-new 'eshell)))
+
+             "Create in shell"
+             (lambda (candidate)
+               (let ((default-directory (if (bufferp candidate)
+                                            (buffer-local-value 'default-directory candidate)
+                                          candidate)))
+                 (helm-switch-shell--create-new 'shell)))
+
+             "Open shell in horizontal split, `C-s'"
+             #'helm-switch-shell--horiz-split
+
+             "Open shell in vertical split, `C-v'"
+             #'helm-switch-shell--vert-split)
     :volatile t
     :cleanup
     (lambda ()
