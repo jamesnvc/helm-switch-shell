@@ -204,7 +204,10 @@
 
 ;;;###autoload
 (defun helm-switch-shell ()
-  "Switch between or create shell/eshell buffers using helm."
+  "Switch between or create shell/eshell buffers using helm.
+
+\\<helm-switch-shell-map>\\[helm-switch-shell--horiz-split-command] to open in a horizontal split.
+\\<helm-switch-shell-map>\\[helm-switch-shell--vert-split-command] to open in a vertical split."
   (interactive)
   (add-hook 'helm-after-update-hook
             #'helm-switch-shell--move-to-first-real-candidate)
