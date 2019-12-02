@@ -98,8 +98,8 @@
                             (length)
                             (+ (if (numberp prefix) 0 2))))))
          (shells (cl-loop for buf in (buffer-list)
-                          when (or (string-prefix-p "*eshell*" (buffer-name buf))
-                                   (string-prefix-p "*shell*" (buffer-name buf)))
+                          when (or (string-prefix-p "*eshell" (buffer-name buf))
+                                   (string-prefix-p "*shell" (buffer-name buf)))
                           collect (cons (helm-switch-shell--buffer-dir-name buf) buf) into cands
                           finally return (-> cands
                                              (sort (lambda (a b) (< (length (car a)) (length (car b)))))
