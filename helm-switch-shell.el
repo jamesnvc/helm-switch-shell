@@ -190,10 +190,12 @@
                                           candidate)))
                  (helm-switch-shell--create-new 'shell)))
 
-             "Open shell in horizontal split, `C-s'"
+             (substitute-command-keys
+               "Open shell in horizontal split `\\<helm-switch-shell-map>\\[helm-switch-shell--horiz-split-command]'")
              #'helm-switch-shell--horiz-split
 
-             "Open shell in vertical split, `C-v'"
+             (substitute-command-keys
+               "Open shell in vertical split `\\<helm-switch-shell-map>\\[helm-switch-shell--vert-split-command]'")
              #'helm-switch-shell--vert-split)
     :volatile t
     :cleanup
