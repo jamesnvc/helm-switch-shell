@@ -2,6 +2,10 @@
 
   This library provides a simple function that uses helm to easily switch between many (e)shells.
 
+** Demo
+
+   [[file:./demo.gif]]
+
 ** Usage
 
    Run ~M-x helm-switch-shell~. It's especially convienent to make a key binding for this, e.g.
