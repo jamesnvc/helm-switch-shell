@@ -5,7 +5,7 @@
 ;; Author: James N. V. Cash <james.cash@occasionallycogent.com>
 ;; URL: https://github.com/jamesnvc/helm-switch-shell
 ;; Package-Requires: ((emacs "25") (cl-lib "0.5") (helm "2.8.8") (dash "2.16.0") (s "1.12.0"))
-;; Package-Version: 1.0
+;; Version: 1.0
 ;; Keywords: matching, processes, terminals, tools
 
 ;; This file is not part of GNU Emacs
@@ -21,7 +21,7 @@
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program. If not, see <http://www.gnu.org/licenses/>.
+;; along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ;;; License
 
