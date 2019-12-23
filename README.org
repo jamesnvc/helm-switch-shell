@@ -1,5 +1,7 @@
 * helm-switch-shell
 
+  [[https://melpa.org/#/helm-switch-shell][file:https://melpa.org/packages/helm-switch-shell-badge.svg]]
+
   This library provides a simple function that uses helm to easily switch between many (e)shells.
 
 ** Demo
