@@ -94,11 +94,17 @@
 
   (helm-switch-shell--pwd-replace-home (buffer-local-value 'default-directory buf)))
 
+(defun helm-switch-shell--shell-select ()
+  (let* ((default-shell (or (getenv "SHELL") "/bin/bash"))
+         (explicit-shell-file-name (read-file-name "Shell: " (file-name-directory default-shell) default-shell)))
+    (shell)))
+
 (defun helm-switch-shell--create-new (&optional type)
   "Create a new shell or eshell, as optionally specified by TYPE, defaulting to `helm-switch-shell-new-shell-type'."
   (cl-case (or type helm-switch-shell-new-shell-type)
     (eshell (eshell t))
-    (shell (shell))))
+    (shell (shell))
+    (shell-select (helm-switch-shell--shell-select))))
 
 ;; Switching shells
 
@@ -208,6 +214,13 @@
                                             (buffer-local-value 'default-directory candidate)
                                           candidate)))
                  (helm-switch-shell--create-new 'shell)))
+
+             "Create in shell (choose shell)"
+             (lambda (candidate)
+               (let ((default-directory (if (bufferp candidate)
+                                            (buffer-local-value 'default-directory candidate)
+                                          candidate)))
+                 (helm-switch-shell--create-new 'shell-select)))
 
              (substitute-command-keys
                "Open shell in horizontal split `\\<helm-switch-shell-map>\\[helm-switch-shell--horiz-split-command]'")
