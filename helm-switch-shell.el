@@ -92,8 +92,12 @@
 
 (defun helm-switch-shell--buffer-dir-name (buf)
   "Display the directory of BUF, with HOME replaced with tilde."
-
-  (helm-switch-shell--pwd-replace-home (buffer-local-value 'default-directory buf)))
+  (concat
+   "["
+   (-> buf (with-current-buffer major-mode) symbol-name
+       string-to-char upcase string)
+   "] "
+   (helm-switch-shell--pwd-replace-home (buffer-local-value 'default-directory buf))))
 
 (defun helm-switch-shell--shell-select ()
   (let* ((default-shell (or (getenv "SHELL") "/bin/bash"))
