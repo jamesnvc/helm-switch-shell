@@ -68,9 +68,10 @@
   :group 'helm)
 
 (defcustom helm-switch-shell-new-shell-type 'eshell
-  "When creating a new shell, should it be eshell (default) or shell."
+  "When creating a new shell, should it be eshell (default), shell, or vterm."
   :type '(radio (const :tag "eshell" eshell)
-                (const :tag "shell" shell))
+                (const :tag "shell" shell)
+                (const :tag "vterm" vterm))
   :group 'helm-switch-shell)
 
 ;; Faces
@@ -104,6 +105,9 @@
   (cl-case (or type helm-switch-shell-new-shell-type)
     (eshell (eshell t))
     (shell (shell))
+    (vterm (if (fboundp 'vterm)
+               (vterm)
+             (message "emacs-libvterm not installed")))
     (shell-select (helm-switch-shell--shell-select))))
 
 ;; Switching shells
@@ -124,7 +128,8 @@
                             (+ (if (numberp prefix) 0 2))))))
          (shells (cl-loop for buf in (buffer-list)
                           when (or (string-prefix-p "*eshell" (buffer-name buf))
-                                   (string-prefix-p "*shell" (buffer-name buf)))
+                                   (string-prefix-p "*shell" (buffer-name buf))
+                                   (string-prefix-p "vterm" (buffer-name buf)))
                           collect (cons (helm-switch-shell--buffer-dir-name buf) buf) into cands
                           finally return (-> cands
                                              (sort (lambda (a b) (< (length (car a)) (length (car b)))))
@@ -214,6 +219,13 @@
                                             (buffer-local-value 'default-directory candidate)
                                           candidate)))
                  (helm-switch-shell--create-new 'shell)))
+
+             "Create in vterm"
+             (lambda (candidate)
+               (let ((default-directory (if (bufferp candidate)
+                                            (buffer-local-value 'default-directory candidate)
+                                          candidate)))
+                 (helm-switch-shell--create-new 'vterm)))
 
              "Create in shell (choose shell)"
              (lambda (candidate)
