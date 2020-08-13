@@ -4,7 +4,7 @@
 
 ;; Author: James N. V. Cash <james.cash@occasionallycogent.com>
 ;; URL: https://github.com/jamesnvc/helm-switch-shell
-;; Package-Requires: ((emacs "25") (helm "2.8.8") (dash "2.16.0") (s "1.12.0"))
+;; Package-Requires: ((emacs "25") (helm "2.8.8") (dash "2.16.0"))
 ;; Version: 1.0
 ;; Keywords: matching, processes, terminals, tools
 
@@ -58,7 +58,6 @@
 (require 'dash)
 (require 'helm)
 (require 'helm-lib)
-(require 's)
 (require 'subr-x)
 
 ;; Customization
@@ -120,14 +119,15 @@
   "Get existing shell/eshell buffers as well as a potential new shell location for the ‘helm-switch-shell’ source."
   (let* ((here (expand-file-name default-directory))
          (dist2here (lambda (d)
-                      (let ((prefix (compare-strings
-                                     here 0 nil
-                                     (expand-file-name d) 0 nil)))
-                        (->> (if (numberp prefix)
-                                (- (abs prefix) 1)
-                              (length d))
-                            (substring here 0)
-                            (s-split "/")
+                      (let* ((d (replace-regexp-in-string "^\\[[ETV]\\] " "" d))
+                             (prefix (compare-strings
+                                      here 0 nil
+                                      (expand-file-name d) 0 nil))
+                             (prefix-len (if (numberp prefix)
+                                             (- (abs prefix) 1)
+                                           (length d))))
+                        (-> (substring here 0 prefix-len)
+                            (split-string "/")
                             (length)
                             (+ (if (numberp prefix) 0 2))))))
          (shells (cl-loop for buf in (buffer-list)
