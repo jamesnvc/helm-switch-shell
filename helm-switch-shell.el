@@ -133,7 +133,7 @@
          (shells (cl-loop for buf in (buffer-list)
                           when (let ((mode (with-current-buffer buf major-mode)))
                                  (or (string= mode "eshell-mode")
-                                     (string= mode "term-mode")
+                                     (string= mode "shell-mode")
                                      (string= mode "vterm-mode")))
                           collect (cons (helm-switch-shell--buffer-dir-name buf) buf) into cands
                           finally return (-> cands
