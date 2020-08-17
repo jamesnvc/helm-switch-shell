@@ -130,17 +130,34 @@
                             (split-string "/")
                             (length)
                             (+ (if (numberp prefix) 0 2))))))
-         (shells (cl-loop for buf in (buffer-list)
-                          when (let ((mode (with-current-buffer buf major-mode)))
-                                 (or (string= mode "eshell-mode")
-                                     (string= mode "shell-mode")
-                                     (string= mode "vterm-mode")))
-                          collect (cons (helm-switch-shell--buffer-dir-name buf) buf) into cands
-                          finally return (-> cands
-                                             (sort (lambda (a b) (< (length (car a)) (length (car b)))))
-                                             (sort
-                                              (lambda (a b) (> (funcall dist2here (car a))
-                                                          (funcall dist2here (car b))))))))
+         (shells (cl-loop for buf being the buffers
+                          for mode = (with-current-buffer buf major-mode)
+                          for cand-name = (helm-switch-shell--buffer-dir-name buf)
+                          when (or (string= mode "eshell-mode")
+                                   (string= mode "shell-mode")
+                                   (string= mode "vterm-mode"))
+                          collect (cons cand-name (cons (buffer-name buf) buf)) into cands
+                          maximize (length cand-name) into len-names
+                          finally return (cons len-names
+                                               (-> cands
+                                                   (sort (lambda (a b) (< (length (car a)) (length (car b)))))
+                                                   (sort
+                                                    (lambda (a b) (> (funcall dist2here (car a))
+                                                                (funcall dist2here (car b)))))))))
+         (candidates (cl-loop with max-len = (car shells)
+                              for path-title-buf in (cdr shells)
+                              for path = (car path-title-buf)
+                              for title = (cadr path-title-buf)
+                              for buf = (cddr path-title-buf)
+                              collect (cons (concat path
+                                                    (make-string
+                                                     (- (+ 2 max-len)
+                                                        (string-width path))
+                                                     ? )
+                                                    title)
+                                            buf)
+                              into cands
+                              finally return cands))
          (new-dir (if (string-blank-p helm-input)
                       default-directory
                     helm-input))
@@ -151,7 +168,7 @@
                            " "
                            (helm-switch-shell--pwd-replace-home new-dir))
                           new-dir)))
-    (cons new-shell shells)))
+    (cons new-shell candidates)))
 
 (defun helm-switch-shell--move-to-first-real-candidate ()
   "Move the helm selection down to the first that's actually a buffer."
