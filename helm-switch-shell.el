@@ -78,6 +78,13 @@
   :group 'helm-switch-shell
   :type 'boolean)
 
+(defcustom helm-switch-shell-show-shell-indicator t
+  "When non-nil, show indicator of what type of shell (e.g. [E] for
+  eshell, [V] for vterm, etc) each candidate is in
+  `helm-switch-shell'."
+  :group 'helm-switch-shell
+  :type 'boolean)
+
 ;; Faces
 
 (defface helm-switch-shell-new-shell-face
@@ -94,14 +101,19 @@
         (concat "~" (substring directory (length home)))
       directory)))
 
-(defun helm-switch-shell--buffer-dir-name (buf)
+(defun helm-switch-shell--candidate-name (buf)
   "Display the directory of BUF, with HOME replaced with tilde."
-  (concat
-   "["
-   (-> buf (with-current-buffer major-mode) symbol-name
-       string-to-char upcase string)
-   "] "
-   (helm-switch-shell--pwd-replace-home (buffer-local-value 'default-directory buf))))
+  (let ((buffer-mode (buffer-local-value 'major-mode buf)))
+    (when (cl-member buffer-mode '("eshell-mode" "shell-mode" "vterm-mode")
+                     :test #'string=)
+      (list
+       (cons 'indicator
+             (concat
+              "["
+              (string (upcase (string-to-char (symbol-name buffer-mode))))
+              "] ") )
+       (cons 'buffer-name (buffer-name buf))
+       (cons 'path (helm-switch-shell--pwd-replace-home (buffer-local-value 'default-directory buf)))))))
 
 (defun helm-switch-shell--shell-select ()
   (let* ((default-shell (or (getenv "SHELL") "/bin/bash"))
@@ -137,29 +149,28 @@
                             (+ (if (numberp prefix) 0 2))))))
          (shells (cl-loop for buf being the buffers
                           for mode = (with-current-buffer buf major-mode)
-                          for cand-name = (helm-switch-shell--buffer-dir-name buf)
-                          when (or (string= mode "eshell-mode")
-                                   (string= mode "shell-mode")
-                                   (string= mode "vterm-mode"))
-                          collect (cons cand-name (cons (buffer-name buf) buf)) into cands
-                          maximize (length cand-name) into len-names
+                          when (helm-switch-shell--candidate-name buf)
+                          collect (cons it buf) into cands
+                          and maximize (length (buffer-name buf)) into len-names
                           finally return (cons len-names
                                                (-> cands
-                                                   (sort (lambda (a b) (< (length (car a)) (length (car b)))))
+                                                   (sort (lambda (a b) (< (length (alist-get 'path (car a)))
+                                                                     (length (alist-get 'path (car b))))))
                                                    (sort
-                                                    (lambda (a b) (> (funcall dist2here (car a))
-                                                                (funcall dist2here (car b)))))))))
+                                                    (lambda (a b) (> (funcall dist2here (alist-get 'path (car a)))
+                                                                (funcall dist2here (alist-get 'path (car b))))))))))
          (candidates (cl-loop with max-len = (car shells)
-                              for path-title-buf in (cdr shells)
-                              for path = (car path-title-buf)
-                              for title = (cadr path-title-buf)
-                              for buf = (cddr path-title-buf)
-                              collect (cons (concat path
-                                                    (make-string
-                                                     (- (+ 2 max-len)
-                                                        (string-width path))
-                                                     ? )
-                                                    title)
+                              for cand-buf in (cdr shells)
+                              for cand = (car cand-buf)
+                              for buf = (cdr cand-buf)
+                              collect (cons (concat
+                                             (when helm-switch-shell-show-shell-indicator (alist-get 'indicator cand))
+                                             (alist-get 'buffer-name cand)
+                                             (make-string
+                                              (- (+ 2 max-len)
+                                                 (string-width (alist-get 'buffer-name cand)))
+                                              ? )
+                                             (alist-get 'path cand))
                                             buf)
                               into cands
                               finally return cands))
