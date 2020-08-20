@@ -73,6 +73,11 @@
                 (const :tag "vterm" vterm))
   :group 'helm-switch-shell)
 
+(defcustom helm-switch-shell-truncate-lines t
+  "Truncate lines in `helm-switch-shell' when non-nil."
+  :group 'helm-switch-shell
+  :type 'boolean)
+
 ;; Faces
 
 (defface helm-switch-shell-new-shell-face
@@ -281,7 +286,8 @@
             #'helm-switch-shell--move-to-first-real-candidate)
   (helm :sources helm-switch-shell--source
         :buffer "*helm shell*"
-        :prompt "shell in: "))
+        :prompt "shell in: "
+        :truncate-lines helm-switch-shell-truncate-lines))
 
 (provide 'helm-switch-shell)
 ;;; helm-switch-shell.el ends here
