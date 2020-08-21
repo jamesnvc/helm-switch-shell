@@ -79,9 +79,7 @@
   :type 'boolean)
 
 (defcustom helm-switch-shell-show-shell-indicator t
-  "When non-nil, show indicator of what type of shell (e.g. [E] for
-  eshell, [V] for vterm, etc) each candidate is in
-  `helm-switch-shell'."
+  "When non-nil, show indicator of what type of shell (e.g. [E] for eshell, [V] for vterm, etc) each candidate is in `helm-switch-shell'."
   :group 'helm-switch-shell
   :type 'boolean)
 
@@ -116,6 +114,7 @@
        (cons 'path (helm-switch-shell--pwd-replace-home (buffer-local-value 'default-directory buf)))))))
 
 (defun helm-switch-shell--shell-select ()
+  "Switch to a new shell, prompting for the shell to run."
   (let* ((default-shell (or (getenv "SHELL") "/bin/bash"))
          (explicit-shell-file-name (read-file-name "Shell: " (file-name-directory default-shell) default-shell)))
     (shell)))
