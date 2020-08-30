@@ -93,17 +93,17 @@
   :group 'helm-switch-shell)
 
 (defface helm-switch-shell-indicator-face
-  '((t :inherit default))
+  '((t :inherit font-lock-buildin-face))
   "Face for the candidate type indicator (e.g. [V], [E], etc)."
   :group 'helm-switch-shell)
 
 (defface helm-switch-shell-buffer-name-face
-  '((t :inherit default))
+  '((t :inherit font-lock-comment-face))
   "Face for the candidate buffer name."
   :group 'helm-switch-shell)
 
 (defface helm-switch-shell-path-face
-  '((t :inherit default))
+  '((t :inherit font-lock-keyword-face))
   "Face for the candidate path."
   :group 'helm-switch-shell)
 
