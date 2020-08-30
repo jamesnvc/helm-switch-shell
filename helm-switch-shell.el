@@ -46,7 +46,9 @@
 
 ;; By default, new shells are created with eshell. You can customize
 ;; this by setting helm-switch-shell-new-shell-type to be shell, in
-;; which case new shells will be created with shell.
+;; which case new shells will be created with shell, or vterm, in
+;; which case they will be created with vterm (if the emacs-libvterm
+;; package is installed).
 
 ;; It provides the following keybindings by default:
 ;; C-s: open the indicated shell in horizontal split (split-window-below)
@@ -86,8 +88,23 @@
 ;; Faces
 
 (defface helm-switch-shell-new-shell-face
-  `((t (:background "#ff69c6" :foreground "#282a36")))
+  `((t :background "#ff69c6" :foreground "#282a36"))
   "Face for the [+] indicator for creating a new shell."
+  :group 'helm-switch-shell)
+
+(defface helm-switch-shell-indicator-face
+  `((t :inherit 'default))
+  "Face for the candidate type indicator (e.g. [V], [E], etc)."
+  :group 'helm-switch-shell)
+
+(defface helm-switch-shell-buffer-name-face
+  `((t :inherit 'default))
+  "Face for the candidate buffer name."
+  :group 'helm-switch-shell)
+
+(defface helm-switch-shell-path-face
+  `((t :inherit 'default))
+  "Face for the candidate path."
   :group 'helm-switch-shell)
 
 ;; Helpers
@@ -163,13 +180,20 @@
                               for cand = (car cand-buf)
                               for buf = (cdr cand-buf)
                               collect (cons (concat
-                                             (when helm-switch-shell-show-shell-indicator (alist-get 'indicator cand))
-                                             (alist-get 'buffer-name cand)
+                                             (when helm-switch-shell-show-shell-indicator
+                                               (propertize
+                                                (alist-get 'indicator cand)
+                                                'face 'helm-switch-shell-indicator-face))
+                                             (propertize
+                                              (alist-get 'buffer-name cand)
+                                              'face 'helm-switch-shell-buffer-name-face)
                                              (make-string
                                               (- (+ 2 max-len)
                                                  (string-width (alist-get 'buffer-name cand)))
                                               ? )
-                                             (alist-get 'path cand))
+                                             (propertize
+                                              (alist-get 'path cand)
+                                              'face 'helm-switch-shell-path-face))
                                             buf)
                               into cands
                               finally return cands))
