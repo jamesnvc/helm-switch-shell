@@ -88,22 +88,22 @@
 ;; Faces
 
 (defface helm-switch-shell-new-shell-face
-  `((t :background "#ff69c6" :foreground "#282a36"))
+  '((t :background "#ff69c6" :foreground "#282a36"))
   "Face for the [+] indicator for creating a new shell."
   :group 'helm-switch-shell)
 
 (defface helm-switch-shell-indicator-face
-  `((t :inherit 'default))
+  '((t :inherit default))
   "Face for the candidate type indicator (e.g. [V], [E], etc)."
   :group 'helm-switch-shell)
 
 (defface helm-switch-shell-buffer-name-face
-  `((t :inherit 'default))
+  '((t :inherit default))
   "Face for the candidate buffer name."
   :group 'helm-switch-shell)
 
 (defface helm-switch-shell-path-face
-  `((t :inherit 'default))
+  '((t :inherit default))
   "Face for the candidate path."
   :group 'helm-switch-shell)
 
