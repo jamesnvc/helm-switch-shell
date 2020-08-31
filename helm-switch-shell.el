@@ -130,17 +130,21 @@
        (cons 'buffer-name (buffer-name buf))
        (cons 'path (helm-switch-shell--pwd-replace-home (buffer-local-value 'default-directory buf)))))))
 
+(defun helm-switch-shell--new-shell ()
+  "Create a new shell."
+  (shell (generate-new-buffer-name "*shell*")))
+
 (defun helm-switch-shell--shell-select ()
   "Switch to a new shell, prompting for the shell to run."
   (let* ((default-shell (or (getenv "SHELL") "/bin/bash"))
          (explicit-shell-file-name (read-file-name "Shell: " (file-name-directory default-shell) default-shell)))
-    (shell)))
+    (helm-switch-shell--new-shell)))
 
 (defun helm-switch-shell--create-new (&optional type)
   "Create a new shell or eshell, as optionally specified by TYPE, defaulting to `helm-switch-shell-new-shell-type'."
   (cl-case (or type helm-switch-shell-new-shell-type)
     (eshell (eshell t))
-    (shell (shell))
+    (shell (helm-switch-shell--new-shell))
     (vterm (if (fboundp 'vterm)
                (vterm)
              (message "emacs-libvterm not installed")))
