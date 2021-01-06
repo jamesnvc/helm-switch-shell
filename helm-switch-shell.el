@@ -181,7 +181,6 @@
                           (length)
                           (+ (if (numberp prefix) 0 2))))))
          (shells (cl-loop for buf being the buffers
-                          for mode = (with-current-buffer buf major-mode)
                           when (helm-switch-shell--candidate-name buf)
                           collect (cons it buf) into cands
                           and maximize (length (buffer-name buf)) into len-names
