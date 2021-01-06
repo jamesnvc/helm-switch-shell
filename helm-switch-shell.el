@@ -57,7 +57,9 @@
 ;; Other options for customization:
 ;;
 ;;   helm-switch-shell-truncate-lines: set to non-nil to truncate candidates
-;;   helm-switch-shell-show-shell-indicator: set to non-nil to show an indicator of what kind of shell the candidate is in the list (e.g. [V] for vterm, [E] for eshell, etc)
+;;   helm-switch-shell-show-shell-indicator: set to non-nil to show an
+;;   indicator of what kind of shell the candidate is in the list
+;;   (e.g. [V] for vterm, [E] for eshell, etc)
 
 ;; Faces:
 ;;
