@@ -4,7 +4,7 @@
 
 ;; Author: James N. V. Cash <james.cash@occasionallycogent.com>
 ;; URL: https://github.com/jamesnvc/helm-switch-shell
-;; Package-Requires: ((emacs "25") (helm "2.8.8") (dash "2.16.0"))
+;; Package-Requires: ((emacs "25.1") (helm "2.8.8"))
 ;; Version: 1.0
 ;; Keywords: matching, processes, terminals, tools
 
@@ -71,7 +71,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'dash)
 (require 'helm)
 (require 'helm-lib)
 (require 'subr-x)
@@ -177,22 +176,22 @@
                              (prefix-len (if (numberp prefix)
                                              (- (abs prefix) 1)
                                            (length d))))
-                        (-> (substring here 0 prefix-len)
-                            (split-string "/")
-                            (length)
-                            (+ (if (numberp prefix) 0 2))))))
+                        (thread-first (substring here 0 prefix-len)
+                          (split-string "/")
+                          (length)
+                          (+ (if (numberp prefix) 0 2))))))
          (shells (cl-loop for buf being the buffers
                           for mode = (with-current-buffer buf major-mode)
                           when (helm-switch-shell--candidate-name buf)
                           collect (cons it buf) into cands
                           and maximize (length (buffer-name buf)) into len-names
                           finally return (cons len-names
-                                               (-> cands
-                                                   (sort (lambda (a b) (< (length (alist-get 'path (car a)))
-                                                                     (length (alist-get 'path (car b))))))
-                                                   (sort
-                                                    (lambda (a b) (> (funcall dist2here (alist-get 'path (car a)))
-                                                                (funcall dist2here (alist-get 'path (car b))))))))))
+                                               (thread-first cands
+                                                 (sort (lambda (a b) (< (length (alist-get 'path (car a)))
+                                                                   (length (alist-get 'path (car b))))))
+                                                 (sort
+                                                  (lambda (a b) (> (funcall dist2here (alist-get 'path (car a)))
+                                                              (funcall dist2here (alist-get 'path (car b))))))))))
          (candidates (cl-loop with max-len = (car shells)
                               for cand-buf in (cdr shells)
                               for cand = (car cand-buf)
