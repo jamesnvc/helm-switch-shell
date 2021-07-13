@@ -159,7 +159,7 @@
     (eshell (eshell t))
     (shell (helm-switch-shell--new-shell))
     (vterm (if (fboundp 'vterm)
-               (vterm)
+               (vterm t)
              (message "emacs-libvterm not installed")))
     (shell-select (helm-switch-shell--shell-select))))
 
